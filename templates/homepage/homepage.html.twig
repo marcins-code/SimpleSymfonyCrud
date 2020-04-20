@@ -1,0 +1,130 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h3>{{ title }}</h3>
+    {#    {{ dump() }}#}
+
+    <a class="btn btn-success btn-sm" href="{{ path('article_new') }}"><i class="far fa-plus-square"></i> New
+        Article</a>
+    <hr/>
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>Title</th>
+            <th>Autor</th>
+            <th>Category</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for article in articles %}
+            <tr>
+                <td>{{ article.id }}</td>
+                <td>{{ article.title }}</td>
+                <td>{{ article.author }}</td>
+                <td>{{ article.category }}</td>
+                <td>
+                    <a href="{{ path('article_edit',{id:article.id}) }}" class="btn-primary btn btn-sm"><i
+                                class="fas fa-edit"></i></a>
+                    <button class="btn-info btn btn-sm edit-article" data-edit-id="{{ article.id }}"><i
+                                class="fas fa-eye"></i>
+                    </button>
+                    <button class="btn-danger btn btn-sm delete-article" data-delete-id="{{ article.id }}"
+                            data-title="{{ article.title }}"><i
+                                class="fas fa-trash-alt"></i></button>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Edit Modal -->
+    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Article details</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body " id="edit-result">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-info" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog " role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Confirm deletion of article</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body ">
+                    Are you sure to delete article:
+                    <div id="edit-result"></div>
+                    <form>
+                        <h5 id="article-title"></h5>
+                        <input type="text" id="edit_id" value="22" hidden>
+                        <hr/>
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(document).ready(function () {
+            $(".edit-article").click(function () {
+                var id = $(this).attr("data-edit-id");
+                $('#editModal').modal('show');
+                $.ajax({
+                    type: "POST",
+                    url: '{{ path('article_view') }}',
+                    data: {'chosen': id},
+                    success: function (data) {
+                        console.log(data);
+                        $("#edit-result").html(data);
+                    }
+                });
+
+            });
+
+            $(".delete-article").click(function () {
+                var id = $(this).attr("data-delete-id");
+                var title = $(this).attr("data-title");
+                console.log(id);
+                $("#edit_id").val(id);
+                $("#article-title").text(title);
+                $('#deleteModal').modal('show');
+
+                $.ajax({ // create an AJAX call...
+                    data: {'delete_id': id}, // get the form data
+                    type: "POST",
+                    url: '{{ path('article_delete') }}',
+                    success: function (response) { // on success..
+                    }
+                });
+
+            });
+
+        });
+    </script>
+{% endblock %}

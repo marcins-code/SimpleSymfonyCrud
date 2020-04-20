@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h6><strong>ID:</strong> {{ article.id }}</h6>
+    <h6><strong>Title:</strong> {{ article.title }}</h6>
+    <h6><strong>Category:</strong> {{ article.category }}</h6>
+    <h6><strong>Author:</strong> {{ article.author }}</h6>
+    <hr/>
+    <h6>Content:</h6>
+    <p>{{ article.content }}</p>
+{% endblock %}
+
+
+
