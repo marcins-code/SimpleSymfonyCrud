@@ -1,2 +1,2 @@
 ## Simple Symfony CRUD 
-Basic CRUD with Boostrap modals for view and confirmation of delete.
+Basic CRUD with Bootstrap modals for view and confirmation of delete.
